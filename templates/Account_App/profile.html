@@ -1,0 +1,81 @@
+{% extends 'navbar.html' %}
+{% block title_block %} {{ user.user_profile.full_name }} | @{{user.username}} {% endblock%}
+{% load crispy_forms_tags%}
+{% block css_block %}
+     <style>
+          .crop{
+               width: 200px;
+               height: 200px;
+               overflow: hidden;
+               margin-left: 10px;
+          }
+          .crop img{
+
+               width: 400px;
+               height: 300px;
+               margin: -75 0 0 -100px;
+          }
+     </style>
+
+{% endblock%}
+
+{% block body_block %}
+<div class="row">
+     <div class="col-sm-4">
+          {% if user.user_profile.profile_pic %}
+               <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="150px" width="150px"></a>  
+          {% else %}
+               <img src="/media/avatar.jpg" alt="" height="150px" width="150px"></a>
+          {% endif%}
+
+     </div>
+     <div class="col-sm-8">
+          <h3>{{user.username}} <a href="{% url 'Account_App:edit_profile' %}" class="btn btn-sm btn-light">Edit Profile</a></h3>
+          <h4>{{user.post.count}} posts &nbsp;  {{user.following.count}} followers &nbsp; {{user.follower.count}} following </h4>
+          <h4>{{user.user_profile.full_name}}</h4>
+          <h5>{{user.user_profile.caption}}</h5>
+     </div>
+</div>
+     <hr>
+     <div class="row">
+               <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+               New Post
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+               <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                         <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">New Post</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                              </button>
+                         </div>
+                         <div class="modal-body">
+                              <form method="POST" enctype="multipart/form-data">
+                                   {{form | crispy}}
+                                   {% csrf_token %}
+                                   <button type="submit" class="btn btn-primary">Post</button>
+                              </form>
+                         </div>
+                         <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </div>
+
+     <div class="row">
+          {% for post in user.post.all %}
+               <div class="crop">
+                    <img src="/media/{{post.image}}" title="{{post.caption}}">
+               </div>
+          {% endfor %}
+     </div>
+
+
+
+{% endblock %}

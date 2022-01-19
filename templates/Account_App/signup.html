@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags%}
+
+{% block title_block%} Signup {% endblock%}
+{% block css_block %}
+<style>
+     .sign-up{
+          width: 400px;
+          border: 1px solid black;
+          padding: 30px;
+          margin-top: 20px;
+     }
+     .sign-up button{
+          width: 100%;
+     }
+</style>
+
+{% endblock %}
+
+{% block body_block%}
+<center>
+     <div class="sign-up">
+          <h3>Create New Account</h3>
+          <form method="POST">
+
+               {{form | crispy }}
+               {% csrf_token%}
+               <button type="submit" class="btn btn-sm btn-success"> Signup </button>
+          </form>
+          <p>Have an account? <a href="{% url 'Account_App:sign_in' %}">Signin</a></p>
+          
+     </div>
+
+</center>
+
+{% endblock %}
+
+

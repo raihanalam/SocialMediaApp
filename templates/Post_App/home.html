@@ -1,0 +1,93 @@
+{% extends 'navbar.html'%}
+{% block title_block %} {{title}} {%endblock%}
+
+{% block css_block %}
+<style>
+     .post{
+          border: 1px solid #888888;
+          background-color: #c1c1c3;
+     }
+</style>
+
+
+{%endblock%}
+
+
+{% block body_block %}
+     {% if search %}
+     {% for user in result%}
+          <div class="row">
+               <div class="col-sm-4">
+                    {% if user.user_profile.profile_pic %}
+                         <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="80px" width="80px">
+                    {% else %}
+                    <img src="/media/avatar.jpg" alt="" height="80px" width="80px">
+                    {% endif%}
+               </div>
+               <div class="col-sm-8">
+                    <a href="{% url 'Account_App:user' username=user.username %}">{{user.username}}</a>
+                    <h3>{{user.user_profile.full_name}}</h3>
+               </div>
+          </div>
+     {% endfor%}
+     {% else %}
+     <div class="row">
+          <div class="col-sm-8">
+               {% for post in posts %}
+               <br>
+               <div class="post">
+                    <div style="padding: 10px;">
+                         {% if post.author.user_profile.profile_pic %}
+                              <img src="/media/{{post.author.user_profile.profile_pic}}" alt="" height="40px" width="40px" class="rounded-circle">
+                         {% else %}
+                              <img src="/media/avatar.jpg" alt="" height="40px" width="40px" class="rounded-circle">
+                         {% endif%}
+                         <a href="{% url 'Account_App:user' username=post.author %}">{{post.author}}</a>
+                    </div>
+
+                    <img src="/media/{{post.image}}" alt="" width="100%">
+
+                    <div class="" style="padding: 10px;">
+                         <p>{{post.caption}}</p>
+                         <h5>{{post.liked_post.count}} likes</h5>
+                         {% if post.pk in liked_post_list%}
+                         <a href="{% url 'Post_App:unlike' pk=post.pk%}"><i class="fas fa-heart" style="font-size: 36px; color: rgb(224, 40, 40);"></i></a>
+                         
+                         {% else%}
+                         
+                         <a href="{% url 'Post_App:like' pk=post.pk%}"><i class="far fa-heart" style="font-size: 36px;"></i></a>
+                         {%endif%}
+                    </div>
+
+               </div>
+               {% endfor%}
+
+          </div>
+          <div class="col-sm-4">
+               <div class="row">
+                    <div class="col-sm-4">
+                         {% if user.user_profile.profile_pic %}
+                              <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="80px" width="80px">
+                         {% else %}
+                         <img src="/media/avatar.jpg" alt="" height="80px" width="80px">
+                         {% endif%}
+                    </div>
+                    <div class="col-sm-8">
+                         <h2>{{user.username}}</h2>
+                         <h3>{{user.user_profile.full_name}}</h3>
+                    </div>
+               </div>
+          </div>
+     </div>
+
+     
+
+     {% endif%}
+
+
+
+
+
+
+{%endblock%}
+
