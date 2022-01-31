@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-_k)y0raz_nif68q-u0jnf+6z22%&h3u=7divspcyjydqm^_xk+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['photofeed.herokuapp.com/', '127.0.0.1' ]
+ALLOWED_HOSTS = ['photofeed.herokuapp.com', '127.0.0.1' ]
 
 
 # Application definition
