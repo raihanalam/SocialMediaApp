@@ -2,20 +2,25 @@
 {% block title_block %} {{ user.user_profile.full_name }} | @{{user.username}} {% endblock%}
 {% load crispy_forms_tags%}
 {% block css_block %}
-     <style>
-          .crop{
-               width: 200px;
-               height: 200px;
-               overflow: hidden;
-               margin-left: 10px;
-          }
-          .crop img{
+<style>
+     .crop {
+          width: 200px;
+          height: 280px;
+          overflow: hidden;
+          margin-left: 10px;
+          margin-bottom: 10px;
+     }
+     .crop:hover{
+          box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+     }
 
-               width: 400px;
-               height: 300px;
-               margin: -75 0 0 -100px;
-          }
-     </style>
+     .crop img {
+
+          width: 200px;
+          height: 280px;
+          margin: -75 0 0 -100px;
+     }
+</style>
 
 {% endblock%}
 
@@ -23,58 +28,105 @@
 <div class="row">
      <div class="col-sm-4">
           {% if user.user_profile.profile_pic %}
-               <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="150px" width="150px"></a>  
+          <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="150px" width="150px"
+               class="rounded-circle"></a>
           {% else %}
-               <img src="/media/avatar.jpg" alt="" height="150px" width="150px"></a>
+          <img src="/media/avatar.jpg" alt="" height="150px" width="150px" class="rounded-circle"></a>
           {% endif%}
 
      </div>
      <div class="col-sm-8">
-          <h3>{{user.username}} <a href="{% url 'Account_App:edit_profile' %}" class="btn btn-sm btn-light">Edit Profile</a></h3>
-          <h4>{{user.post.count}} posts &nbsp;  {{user.following.count}} followers &nbsp; {{user.follower.count}} following </h4>
+          <h3>{{user.username}} <a href="{% url 'Account_App:edit_profile' %}" class="btn btn-sm btn-light">Edit
+                    Profile</a></h3>
+          <h4>{{user.post.count}} posts &nbsp; {{user.following.count}} followers &nbsp; {{user.follower.count}}
+               following </h4>
           <h4>{{user.user_profile.full_name}}</h4>
-          <h5>{{user.user_profile.caption}}</h5>
+          <h5>{{user.user_profile.description}}</h5>
      </div>
 </div>
-     <hr>
-     <div class="row">
-               <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-               New Post
-          </button>
-          
-          <!-- Modal -->
-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-               <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                         <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">New Post</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<hr>
+<div class="row">
+     <!-- Button trigger modal -->
+     <button class="my-3 mx-3 btn btn-primary" type="button" data-toggle="modal" data-target="#exampleModal">
+          New Post
+     </button>
+
+     <!-- Modal -->
+     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                    <div class="modal-header">
+                         <h5 class="modal-title" id="exampleModalLabel">New Post</h5>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
-                              </button>
-                         </div>
-                         <div class="modal-body">
-                              <form method="POST" enctype="multipart/form-data">
-                                   {{form | crispy}}
-                                   {% csrf_token %}
-                                   <button type="submit" class="btn btn-primary">Post</button>
-                              </form>
-                         </div>
-                         <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                         </div>
+                         </button>
+                    </div>
+                    <div class="modal-body">
+                         <form method="POST" enctype="multipart/form-data">
+                              {{form | crispy}}
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-primary">Post</button>
+                         </form>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                </div>
           </div>
      </div>
+</div>
 
-     <div class="row">
-          {% for post in user.post.all %}
+<div class="row">
+     {% for post in user.post.all %}
+
+          <a type="button" style="color: #979595;" data-toggle="modal" data-target="#m-{{post.pk}}">
                <div class="crop">
                     <img src="/media/{{post.image}}" title="{{post.caption}}">
                </div>
-          {% endfor %}
-     </div>
+          </a>
+          <!-- Modal -->
+          <div class="modal fade" id="m-{{post.pk}}" role="dialog">
+               <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                         <div class="modal-body">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <div class="row">
+                                   <div class="col-sm-6">
+                                        <img src="/media/{{post.image}}" alt="" class="img-fluid"><br>
+                                        {{post.caption}}
+                                   </div>
+                                   <div class="col-sm-6">
+                                        <h5>All Comments:</h5>
+                                        {% for comment_ob in post.commented_post.all %}
+                                             <a href="{% url 'Account_App:user' username=comment_ob.user %}"><img
+                                                       src="/media/{{comment_ob.user.user_profile.profile_pic}}" alt=""
+                                                       class="rounded-circle" height="15px" width="15px"> {{comment_ob.user}} </a><small style="color: #b3aeae;">{{ comment_ob.date_created }}</small>
+                                             <p>{{ comment_ob.comment }}</p>
+                                        {% endfor %}
+                                        <form action="{% url 'Post_App:comment' pk=post.pk %}" class="d-flex" method="POST">
+                                             {{comment_form | crispy}}
+                                             {% csrf_token %}
+                                             <button type="submit" style="height: 40px;" class="btn btn-light">Send</button>
+                                        </form>
+
+                                   </div>
+                              </div>
+
+                         </div>
+                         <div class="row" style="padding-left: 30px; padding-bottom: 20px;">
+                              <div class="col-sm-6">
+                                   <a href="{% url 'Post_App:delete_post' pk=post.pk %}" class="btn btn-danger btn-sm">Delete Post</a>
+                              </div>
+                              <div class="col-sm-6">
+                                   
+                              </div>
+                         </div>                    
+                    </div>
+               </div>
+          </div>
+     {% endfor %}
+</div>
 
 
 

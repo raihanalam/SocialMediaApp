@@ -4,11 +4,19 @@
 {% block title_block%}{{title}}{% endblock%}
 {% block css_block %}
 <style>
+     .sign-page{
+          height: auto screen;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+     }
      .sign-in{
-          width: 400px;
           border: 1px solid black;
           padding: 30px;
           margin-top: 20px;
+          width: 400px;
      }
      .sign-in button{
           width: 100%;
@@ -19,18 +27,21 @@
 
 {% block body_block%}
 
-<center>
-     <div class="sign-in">
-          <h3>Signin Your Account</h3>
-          <form method="POST">
-               {{form | crispy }}
-               {% csrf_token%}
-               <button type="submit" class="btn btn-sm btn-success"> Signin </button>
-          </form>
-          <p>Havn't an account? <a href="{% url 'Account_App:sign_up'%}">Signup</a></p>
-          
-     </div>
-
-</center>
+<div class="sign-page">
+     <center>
+          <div class="sign-in">
+               <h3 style="font-family: 'Comforter', cursive; font-size: 60px;">PhotoFeed</h3>
+               <form method="POST" class="my-5">
+                    {{form | crispy }}
+                    {% csrf_token%}
+                    <button type="submit" class="btn btn-sm btn-success"> Signin </button>
+               </form>
+               <p>Havn't an account? <a href="{% url 'Account_App:sign_up'%}">Signup</a></p>
+               <p>or,<br>Signin with a test account <span style="text-align: left; color: rgb(124, 117, 117);"><br>username: test_user <br>password: 123456@test</span></p>
+               
+          </div>
+     
+     </center>
+</div>
 
 {% endblock %}

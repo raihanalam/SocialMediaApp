@@ -1,11 +1,25 @@
 {% extends 'navbar.html'%}
+{% load crispy_forms_tags %}
 {% block title_block %} {{title}} {%endblock%}
 
 {% block css_block %}
 <style>
      .post{
           border: 1px solid #888888;
-          background-color: #c1c1c3;
+          background-color: #dfdbdb;
+          height: auto;
+     }
+     .post:hover{
+          background-color: rgb(227, 238, 238);
+     }
+     .s-user{
+          background-color: #dfdbdb;
+          margin-bottom: 10px;
+          padding: 5px;
+          width: 100%;
+     }
+     .s-user:hover{
+          background-color: rgb(227, 238, 238);
      }
 </style>
 
@@ -14,6 +28,7 @@
 
 
 {% block body_block %}
+<div class="container">
      {% if search %}
      {% for user in result%}
           <div class="row">
@@ -25,8 +40,9 @@
                     {% endif%}
                </div>
                <div class="col-sm-8">
-                    <a href="{% url 'Account_App:user' username=user.username %}">{{user.username}}</a>
+                    <a style=" text-decoration: none;" href="{% url 'Account_App:user' username=user.username %}"><h3>{{user.username}}</h3></a>
                     <h3>{{user.user_profile.full_name}}</h3>
+                    <a class="btn btn-light btn-sm" href="{% url 'Account_App:user' username=user.username %}">View Profile</a>
                </div>
           </div>
      {% endfor%}
@@ -41,50 +57,135 @@
                               <img src="/media/{{post.author.user_profile.profile_pic}}" alt="" height="40px" width="40px" class="rounded-circle">
                          {% else %}
                               <img src="/media/avatar.jpg" alt="" height="40px" width="40px" class="rounded-circle">
-                         {% endif%}
-                         <a href="{% url 'Account_App:user' username=post.author %}">{{post.author}}</a>
+                         {% endif %}
+                         <a style="color: black; text-decoration: none;" href="{% url 'Account_App:user' username=post.author %}">{{post.author}}</a>
                     </div>
 
                     <img src="/media/{{post.image}}" alt="" width="100%">
+                    <h5 style="margin-left: 10px;">{{post.caption}}</h5>
 
-                    <div class="" style="padding: 10px;">
-                         <p>{{post.caption}}</p>
-                         <h5>{{post.liked_post.count}} likes</h5>
-                         {% if post.pk in liked_post_list%}
-                         <a href="{% url 'Post_App:unlike' pk=post.pk%}"><i class="fas fa-heart" style="font-size: 36px; color: rgb(224, 40, 40);"></i></a>
-                         
-                         {% else%}
-                         
-                         <a href="{% url 'Post_App:like' pk=post.pk%}"><i class="far fa-heart" style="font-size: 36px;"></i></a>
-                         {%endif%}
+                    <div class="d-flex flex-column" style="padding: 10px;">
+                         <div class="">
+                              {% if post.pk in liked_post_list%}
+                              <a href="{% url 'Post_App:unlike' pk=post.pk%}"><i class="fas fa-heart" style="font-size: 30px; color: rgb(224, 40, 40);"></i></a>
+                              
+                              {% else%}
+                              
+                              <a style="color:black" href="{% url 'Post_App:like' pk=post.pk%}"><i class="far fa-heart" style="font-size: 30px;"></i></a>
+                              {%endif%}
+               
+                              <a type="button" style="font-size: 27px;" data-toggle="modal" data-target="#m-{{post.pk}}"><i class="far fa-comment-alt"></i></a>
+                         </div>
+                         <h6>{{post.liked_post.count}} likes</h6>
+                         <small style="color: #b3aeae;">{{post.upload_date}}</small>
+                    
+                    <div class="view-full">
+                         <!--- <button type="button" class="btn btn-light btn-sm " data-toggle="modal" data-target="#myModal">View Full</button> -->
+
+                         <a type="button" style="color: #979595;" data-toggle="modal" data-target="#m-{{post.pk}}">view all {{post.commented_post.count }} comments</a>
+                         <!-- Modal -->
+                         <div class="modal fade" id="m-{{post.pk}}" role="dialog">
+                              <div class="modal-dialog modal-xl">
+                                   <div class="modal-content">
+
+                                        <div class="modal-body">
+                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                             <div class="row">
+                                                  <div class="col-sm-8">
+                                                       <img src="/media/{{post.image}}" alt="" class="img-fluid">
+                                                       <h5>{{post.caption}}</h5>
+                                                       <div class="">
+                                                            {% if post.pk in liked_post_list%}
+                                                            <a href="{% url 'Post_App:unlike' pk=post.pk%}"><i class="fas fa-heart" style="font-size: 30px; color: rgb(224, 40, 40);"></i></a>
+                                                            
+                                                            {% else%}
+                                                            
+                                                            <a style="color:black" href="{% url 'Post_App:like' pk=post.pk%}"><i class="far fa-heart" style="font-size: 30px;"></i></a>
+                                                            {%endif%}
+                                             
+                                                            <a type="button" style="font-size: 27px;" data-toggle="modal" data-target="#m-{{post.pk}}"><i class="far fa-comment-alt"></i></a>
+                                                       </div>
+                                                       <h6>{{post.liked_post.count}} likes</h6>
+                                                       <small>{{post.upload_date}}</small>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                       <h5>All Comments:</h5>
+                                                       {% for comment_ob in post.commented_post.all %}
+                                                            <a href="{% url 'Account_App:user' username=comment_ob.user %}"><img src="/media/{{comment_ob.user.user_profile.profile_pic}}" alt="" class="rounded-circle" height="15px" width="15px"> {{comment_ob.user}} </a><small style="color: #b3aeae;">{{ comment_ob.date_created }}</small>
+                                                            <p> &emsp; {{comment_ob.comment}}</p>
+                                                       {% endfor %}
+                                                       
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                             <form action="{% url 'Post_App:comment' pk=post.pk %}" class="d-flex" method="POST">
+                                                  {{comment_form | crispy}}
+                                                  {% csrf_token %}
+                                                  <button type="submit" style="height: 40px;" class="btn btn-light">Send</button>
+                                             </form>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>  
                     </div>
-
+                    </div>
+                    <form action="{% url 'Post_App:comment' pk=post.pk %}" class="d-flex" method="POST" style="margin-left:10px;">
+                         {{comment_form | crispy}}
+                         {% csrf_token %}
+                         <button type="submit" style="height: 40px;" class="btn btn-light">Send</button>
+                    </form>
                </div>
                {% endfor%}
 
           </div>
           <div class="col-sm-4">
-               <div class="row">
+               <div class="row" style="border-bottom: 1px solid black; padding:10px;">
                     <div class="col-sm-4">
                          {% if user.user_profile.profile_pic %}
-                              <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="80px" width="80px">
+                              <img src="/media/{{user.user_profile.profile_pic}}" alt="" height="80px" width="80px" class="rounded-circle">
                          {% else %}
-                         <img src="/media/avatar.jpg" alt="" height="80px" width="80px">
+                              <img src="/media/avatar.jpg" alt="" height="80px" width="80px" class="rounded-circle">
                          {% endif%}
                     </div>
                     <div class="col-sm-8">
                          <h2>{{user.username}}</h2>
+
                          <h3>{{user.user_profile.full_name}}</h3>
+                         <a href="{% url 'Account_App:user' username=request.user %}" class="btn btn-light btn-sm">View Profile</a>
                     </div>
+               </div>
+               <div class="my-5">
+                    <h6 class="my-2"> Suggestions For You</h6>
+
+                    {% for s_user in users %}
+
+                              <a href="{% url 'Account_App:user' username=s_user %}" class="" style="text-decoration: none; color: black;">
+                                   <div class="row s-user">
+                                        <div class="col-sm-4">
+                                             {% if s_user.user_profile.profile_pic %}
+                                                  <img src="/media/{{s_user.user_profile.profile_pic}}" alt="" height="30px" width="30px" class="rounded-circle">
+                                             {% else %}
+                                                  <img src="/media/avatar.jpg" alt="" height="30px" width="30px" class="rounded-circle">
+                                             {% endif%}
+                                        </div>
+                                        <div class="col-sm-8">
+                                             <h6>@{{s_user.username}}</h6>
+                                             {% comment%} <h6>{{s_user.user_profile.full_name}}</h6> {% endcomment %}
+                                        </div>
+                                   </div>
+                              </a>
+                    {% endfor%}
+
+                    
                </div>
           </div>
      </div>
-
-     
+     <br><br>
 
      {% endif%}
 
-
+</div>
 
 
 

@@ -4,11 +4,19 @@
 {% block title_block%} Signup {% endblock%}
 {% block css_block %}
 <style>
+     .sign-page{
+          height: auto screen;
+          background: rgb(255, 255, 255);
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+     }
      .sign-up{
           width: 400px;
           border: 1px solid black;
           padding: 30px;
-          margin-top: 20px;
      }
      .sign-up button{
           width: 100%;
@@ -19,18 +27,18 @@
 
 {% block body_block%}
 <center>
-     <div class="sign-up">
-          <h3>Create New Account</h3>
-          <form method="POST">
-
-               {{form | crispy }}
-               {% csrf_token%}
-               <button type="submit" class="btn btn-sm btn-success"> Signup </button>
-          </form>
-          <p>Have an account? <a href="{% url 'Account_App:sign_in' %}">Signin</a></p>
-          
+     <div class="sign-page">
+          <div class="sign-up">
+               <h3>Create New Account</h3>
+               <form method="POST" class="my-5">
+                    {{form | crispy }}
+                    {% csrf_token%}
+                    <button type="submit" class="btn btn-sm btn-success"> Signup </button>
+               </form>
+               <p>Have an account? <a href="{% url 'Account_App:sign_in' %}">Signin</a></p>
+               
+          </div>
      </div>
-
 </center>
 
 {% endblock %}

@@ -1,5 +1,6 @@
+from dataclasses import field
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import UserProfile
 
@@ -19,5 +20,11 @@ class EditProfile(forms.ModelForm):
           model = UserProfile
           exclude = ('user',)
 
+class SigninForm(AuthenticationForm):
+     username = forms.CharField(required=True,label="",widget=forms.TextInput(attrs={'placeholder':'Username'}))
+     password = forms.CharField(required=True,label="",widget=forms.PasswordInput(attrs={'placeholder':'Password'}))
+     class Meta:
+          model = User
+          fields = ('username','password')
 
 

@@ -1,14 +1,13 @@
-import imp
-from urllib import request
 from django.shortcuts import render, HttpResponseRedirect
-from .forms import CreateNewUser, EditProfile
+from .forms import CreateNewUser, EditProfile, SigninForm
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse,reverse_lazy
 from .models import UserProfile, Follow
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from Post_App.forms import PostForm
+from Post_App.forms import PostForm, CommentForm
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 
 def sign_up(request):
@@ -17,19 +16,24 @@ def sign_up(request):
 
      if request.method == 'POST':
           my_form = CreateNewUser(data=request.POST)
-          if my_form.is_valid:
+          if my_form.is_valid():
                user = my_form.save()
                registerd = True
-               user_profile = UserProfile(user=user)
-               user_profile.save()
+               try:
+                    user_profile = UserProfile(user=user)
+                    user_profile.save()
+                    messages.success(request,"Yor account has been created.")
+                    return HttpResponseRedirect(reverse('Account_App:sign_in'))
+               except:
+                    messages.warning(request,"There is a problem creting in your accont. Please check and try again!")
                return HttpResponseRedirect(reverse('Account_App:sign_in'))
 
      return render(request,'Account_App/signup.html',context={'title':'PhotoGram | Signup','form':my_form,'registerd':registerd})
 
 def sign_in(request):
-     form = AuthenticationForm()
+     form = SigninForm()
      if request.method == "POST":
-          form = AuthenticationForm(data=request.POST)
+          form = SigninForm(data=request.POST)
           if form.is_valid():
                username = form.cleaned_data.get('username')
                password = form.cleaned_data.get('password')
@@ -62,6 +66,7 @@ def edit_profile(request):
 def profile(request):
 
      form = PostForm()
+     comment_form = CommentForm()
 
      if request.method == "POST":
           form = PostForm(request.POST, request.FILES)
@@ -72,17 +77,19 @@ def profile(request):
                post.author = request.user
                post.save()
 
-               return HttpResponseRedirect(reverse('Post_App:home_page'))
-     return render (request,'Account_App/profile.html',context={'form':form})
+               return HttpResponseRedirect(reverse('Account_App:profile'))
+     return render (request,'Account_App/profile.html',context={'form':form,'comment_form':comment_form})
 
 
 @login_required
 def user_view(request,username):
      other_user = User.objects.get(username=username)
      already_followed = Follow.objects.filter(follower = request.user, following= other_user )
+
+     comment_form = CommentForm()
      if other_user == request.user:
           return HttpResponseRedirect(reverse('Account_App:profile'))
-     return render(request,'Account_App/user.html',context={'other_user':other_user,'followed':already_followed})
+     return render(request,'Account_App/user.html',context={'other_user':other_user,'followed':already_followed, 'comment_form':comment_form })
 
 
 
