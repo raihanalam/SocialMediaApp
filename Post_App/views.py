@@ -23,7 +23,7 @@ def home(request):
           
      comment_form = CommentForm()
 
-     return render(request,'Post_App/home.html',context={'title': 'PhotoGram | Home','search':search ,'result':result, 'posts':posts,'liked_post_list':liked_post_list,'comment_form': comment_form,'users':users, 'following_list':following_list})
+     return render(request,'Post_App/home.html',context={'title': 'PhotoFeed | Home','search':search ,'result':result, 'posts':posts,'liked_post_list':liked_post_list,'comment_form': comment_form,'users':users, 'following_list':following_list})
 
 
 @login_required
