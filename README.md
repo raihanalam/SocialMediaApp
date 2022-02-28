@@ -2,7 +2,7 @@
 
 PhotoFeed is a photo sharing app where a user can:
 * Create an account
-* Make and edit him/her profile
+* Make and edit profile
 * Post photos with a caption.
 * Follow other people
 * View others profile in the network
